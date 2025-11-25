@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model MeetingSession {
+  id              String            @id
+  userId          String
+  title           String?
+  status          SessionStatus     @default(RECORDING)
+  startedAt       DateTime          @default(now())
+  endedAt         DateTime?
+  user            user              @relation(fields: [userId], references: [id])
+  MeetingSummary  MeetingSummary?
+  TranscriptChunk TranscriptChunk[]
+}
+
+model MeetingSummary {
+  id               String         @id
+  meetingSessionId String         @unique
+  summaryText      String
+  createdAt        DateTime       @default(now())
+  MeetingSession   MeetingSession @relation(fields: [meetingSessionId], references: [id])
+}
+
+model TranscriptChunk {
+  id               String         @id
+  meetingSessionId String
+  index            Int
+  text             String
+  createdAt        DateTime       @default(now())
+  MeetingSession   MeetingSession @relation(fields: [meetingSessionId], references: [id])
+}
+
+model account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime
+  user                  user      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      user     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model user {
+  id             String           @id
+  email          String           @unique
+  name           String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime
+  emailVerified  Boolean          @default(false)
+  image          String?
+  MeetingSession MeetingSession[]
+  account        account[]
+  session        session[]
+}
+
+model verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime
+
+  @@index([identifier])
+}
+
+enum SessionStatus {
+  RECORDING
+  PAUSED
+  PROCESSING
+  COMPLETED
+}
