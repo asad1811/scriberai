@@ -1,6 +1,8 @@
 # scriberai
 https://drive.google.com/file/d/1F_L6R9BDqOmLVmZlkpHY8gXI27KbmEqO/view?usp=sharing
+
 Check this link for the walkthrough of the app or download "walkthrough.mp4" directly from the repository.
+
 In this project, I built a real-time meeting transcription and summarization system that handles audio capture, streaming, transcription, and post-processing end to end. I structured the system so it can capture audio either from the microphone or from a shared browser tab, using MediaRecorder on the frontend to produce small chunks. These chunks are streamed to the backend using Socket.io, which manages the full session flow—start, pause, resume, audio_chunk processing, and stop. On the server, I maintain per-session in-memory state, including batching buffers, user information, source mode, and transcript indexing. Once batches are processed, I store transcript chunks and final summaries using Prisma models for sessions, chunks, and summaries.
 
 A large part of my work focused on demonstrating “media handling depth.” I implemented adaptive chunk batching, allowing batch sizes to expand or shrink based on Gemini latency and backpressure signals. I added a ring buffer to ensure raw audio is stored safely without unbounded memory growth, and I introduced a bounded backpressure-aware queue to keep the system stable when inbound audio exceeds processing capacity. I also refined tab-audio handling by validating audio tracks, detecting tab-end events, and falling back to the microphone when necessary.
