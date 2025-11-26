@@ -9,7 +9,7 @@ A large part of my work focused on demonstrating “media handling depth.” I i
 
 To make the system observable, I incorporated an optional diagnostics overlay that surfaces key metrics such as current batch size, Gemini latency, pending batches, ring-buffer overflow status, and reconnection events. These combined choices reflect deliberate architectural decisions optimized for long-duration streaming and stable transcription. Enter npm run dev from root folder to run both the frontend and backend together.
 
-# Architecture Diagram (Mermaid)
+# Architecture Diagram 
     
     A[Start Session] --> B[MediaRecorder Captures Chunks]
     B --> C[Socket.io Streams Chunks to Server]
